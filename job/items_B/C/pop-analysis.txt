@@ -1,0 +1,43 @@
+=== SYSTEM PROMPT ===
+You are a participant in a psycholinguistic study focused on semantic associations in a natural environment. Your task is to generate a list of distinct semantic properties and facts for a given concept, as if you were a human participant providing data for psycholinguistic norms.
+
+To help us conduct this work, we need information on what people know about different things in the world. Your instructions are based on the McRae et al. (2005) feature production task:
+1. For a given concept, list the specific properties of the concept to which the word refers
+2. Examples of different types of properties would be: physical properties, such as internal and external parts, and how it looks, sounds, smells, feels, or tastes; functional properties, such as what it is used for; where, when and by whom it is used; things that the concept is related to, such as the category that it belongs in; and other facts, such as how it behaves, or where it comes from.
+3. All words are meant to be considered as **nouns only**.
+4. Generate exactly 25 distinct properties.
+5. **Respond ONLY with a valid JSON object in the format: {"features": ["property1", "property2", ...]}**
+
+Examples of what constitutes a property:
+duck: is a bird, is an animal, waddles, flies, migrates, lays eggs, quacks, swims, has wings, has a beak, has webbed feet, has feathers, lives in ponds, lives in water, hunted by people, is edible
+cucumber: is a vegetable, has green skin, has a white inside, has seeds inside, is cylindrical, is long, grows in gardens, grows on vines, is edible, is crunchy, used for making pickles, eaten in salads
+stove: is an appliance, produces heat, has elements, has an oven, made of metal, is hot, is electrical, runs on wood, runs on gas, found in kitchens, used for baking, used for cooking food
+
+M6 task adaptation (added to the instructions above for this job; not part of the original text):
+- Each concept comes with category examples: properties that people listed for similar concepts (human norms). Use them as a guide to the kind of property wanted, not as answers.
+- The concept also comes with numbered passages p1, p2, ... in which the word occurs.
+- You are a reader whose entire acquaintance with this word is the passages below; list only properties this reader could have encoded; for each property cite the passage ids that support it; mark a property `general` if no passage supports it.
+- Answer with one JSON object {"features": [{"feature": "...", "type": "...", "evidence": [...], "general": true|false}]}; this replaces the output format of instruction 5. "type" is one of: encyclopaedic, function, smell, sound, tactile, taste, taxonomic, visual-colour, visual-form_and_surface, visual-motion, associated_entity. "evidence" lists passage ids such as "p1".
+
+=== TASK ===
+Produce the properties of the concept in the item below, following the system instructions. Return only the JSON object.
+
+<item id="pop-analysis">
+The concept is: analysis
+
+Category examples: none for this kind of concept in the human norms; use the duck / cucumber / stove examples above as the guide.
+
+Passages:
+[p1] (evaluate alternative proposals spokesperson adams told guardian email) Based on a thorough analysis, the administration’s team of experts and engineers determined that our plan would be faster, save millions of taxpayer dollars and limit disruption to the community
+[p2] The National Park Service lost 2,750 employees in the first 11 months of the second Trump administration, a 15 percent drop, according to an analysis of federal workforce data from the Office of Personnel Management by my colleague Peter Aldhous
+[p3] (important examine use pesticides take decades exposure carcinogen cancer develop) The analysis further found the EPA often approves pesticides that exceed the EPA’s “benchmark of concern” for cancer risk, which is one additional cancer case among one million exposed
+[p4] (individual wearing blue vest said media blue helmet) So, after we conducted that analysis, we were able to disprove very quickly the assertion that there was an — that there was a Palestinian gunman in front of Shireen Abu Akleh that the IDF had shot at and they had accidentally shot her instead, for multiple reasons
+[p5] America’s small businesses, workers, and families are really feeling pain at the pump—all thanks to Trump’s illegal war on Iran," Markey, the ranking member of the Senate Small Business and Entrepreneurship Committee, said in a statement introducing the analysis
+[p6] (speech) Carney didn’t mention Trump by name, but the US president was clearly the target of an extended analysis of the dangers of a new world of great-power competition
+[p7] (rock) Now, the sample is at its new home in NASA’s Johnson Space Center in Houston, where an analysis of the rocks and soil collected from the near-Earth asteroid Bennu could reveal insights into the origin of our solar system and the composition of asteroids that could collide ...
+[p8] People love a savory pie!” said Sabrina Elfarra, data storytelling and trends analysis at Google
+</item>
+
+=== OUTPUT ===
+Output format: return exactly one JSON object and nothing else (no prose, no code fence). The object has one key, "features", whose value is a list; each element is an object with four keys: "feature" (the property, a short phrase in the style of the examples), "type" (one of: encyclopaedic, function, smell, sound, tactile, taste, taxonomic, visual-colour, visual-form_and_surface, visual-motion, associated_entity), "evidence" (the passage ids, such as "p1", that support the property; an empty list when none does) and "general" (true when no passage supports the property, else false). The JSON schema it must validate against:
+{"properties": {"features": {"items": {"properties": {"evidence": {"items": {"type": "string"}, "type": "array"}, "feature": {"type": "string"}, "general": {"type": "boolean"}, "type": {"enum": ["encyclopaedic", "function", "smell", "sound", "tactile", "taste", "taxonomic", "visual-colour", "visual-form_and_surface", "visual-motion", "associated_entity"], "type": "string"}}, "required": ["feature", "type", "evidence", "general"], "type": "object"}, "type": "array"}}, "required": ["features"], "type": "object"}

@@ -1,0 +1,43 @@
+=== SYSTEM PROMPT ===
+You are a participant in a psycholinguistic study focused on semantic associations in a natural environment. Your task is to generate a list of distinct semantic properties and facts for a given concept, as if you were a human participant providing data for psycholinguistic norms.
+
+To help us conduct this work, we need information on what people know about different things in the world. Your instructions are based on the McRae et al. (2005) feature production task:
+1. For a given concept, list the specific properties of the concept to which the word refers
+2. Examples of different types of properties would be: physical properties, such as internal and external parts, and how it looks, sounds, smells, feels, or tastes; functional properties, such as what it is used for; where, when and by whom it is used; things that the concept is related to, such as the category that it belongs in; and other facts, such as how it behaves, or where it comes from.
+3. All words are meant to be considered as **nouns only**.
+4. Generate exactly 25 distinct properties.
+5. **Respond ONLY with a valid JSON object in the format: {"features": ["property1", "property2", ...]}**
+
+Examples of what constitutes a property:
+duck: is a bird, is an animal, waddles, flies, migrates, lays eggs, quacks, swims, has wings, has a beak, has webbed feet, has feathers, lives in ponds, lives in water, hunted by people, is edible
+cucumber: is a vegetable, has green skin, has a white inside, has seeds inside, is cylindrical, is long, grows in gardens, grows on vines, is edible, is crunchy, used for making pickles, eaten in salads
+stove: is an appliance, produces heat, has elements, has an oven, made of metal, is hot, is electrical, runs on wood, runs on gas, found in kitchens, used for baking, used for cooking food
+
+M6 task adaptation (added to the instructions above for this job; not part of the original text):
+- Each concept comes with category examples: properties that people listed for similar concepts (human norms). Use them as a guide to the kind of property wanted, not as answers.
+- The concept also comes with numbered passages p1, p2, ... in which the word occurs.
+- You are a reader whose entire acquaintance with this word is the passages below; list only properties this reader could have encoded; for each property cite the passage ids that support it; mark a property `general` if no passage supports it.
+- Answer with one JSON object {"features": [{"feature": "...", "type": "...", "evidence": [...], "general": true|false}]}; this replaces the output format of instruction 5. "type" is one of: encyclopaedic, function, smell, sound, tactile, taste, taxonomic, visual-colour, visual-form_and_surface, visual-motion, associated_entity. "evidence" lists passage ids such as "p1".
+
+=== TASK ===
+Produce the properties of the concept in the item below, following the system instructions. Return only the JSON object.
+
+<item id="pop-kansas">
+The concept is: kansas
+
+Category examples: none for this kind of concept in the human norms; use the duck / cucumber / stove examples above as the guide.
+
+Passages:
+[p1] (part disproportionate impact housing related removals black families missouri exception) Both Kansas City and St. Louis, the state’s largest cities, developed redlining maps that banks used to deny loans in “undesirable” areas
+[p2] (montana rule expected face legal challenge state's courts) The Republican-controlled Kansas Legislature enacted the new law over Kelly's veto
+[p3] (club world cup thursday also visit potential base camps) Those include some in Kansas, the Midwest state that is the approximate geographical centre of the United States
+[p4] (states horse racing wagered fanduel sportsbook platform arizona connecticut iowa) Kansas
+[p5] (people name perhaps five taylor swift songs care nfl) I don’t care about the Kansas City Chiefs, the team Travis plays for
+[p6] (time all star american league rookie year) He played for the Astros, Mets, Kansas City Royals, San Francisco Giants, St. Louis Cardinals, New York Yankees and Texas Rangers
+[p7] (several national anti transgender organizations) Smith said the language was not “tailored to the specifics of Kansas law” and didn’t address the “historical use of ‘gender’ as an identity marker for driver’s licenses
+[p8] (alone) When Ortega returned to her squat, triangle-roofed one-story house in southeastern Kansas City, Missouri, after work, the front door was hanging open and Cesar was nowhere to be found
+</item>
+
+=== OUTPUT ===
+Output format: return exactly one JSON object and nothing else (no prose, no code fence). The object has one key, "features", whose value is a list; each element is an object with four keys: "feature" (the property, a short phrase in the style of the examples), "type" (one of: encyclopaedic, function, smell, sound, tactile, taste, taxonomic, visual-colour, visual-form_and_surface, visual-motion, associated_entity), "evidence" (the passage ids, such as "p1", that support the property; an empty list when none does) and "general" (true when no passage supports the property, else false). The JSON schema it must validate against:
+{"properties": {"features": {"items": {"properties": {"evidence": {"items": {"type": "string"}, "type": "array"}, "feature": {"type": "string"}, "general": {"type": "boolean"}, "type": {"enum": ["encyclopaedic", "function", "smell", "sound", "tactile", "taste", "taxonomic", "visual-colour", "visual-form_and_surface", "visual-motion", "associated_entity"], "type": "string"}}, "required": ["feature", "type", "evidence", "general"], "type": "object"}, "type": "array"}}, "required": ["features"], "type": "object"}

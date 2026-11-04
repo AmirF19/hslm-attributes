@@ -1,0 +1,52 @@
+{
+ "properties": {
+  "category_block_id": {
+   "type": "string"
+  },
+  "id": {
+   "type": "string"
+  },
+  "lemma": {
+   "type": "string"
+  },
+  "text": {
+   "type": "string"
+  },
+  "windows": {
+   "items": {
+    "properties": {
+     "id": {
+      "pattern": "^win_[0-9a-f]{12}$",
+      "type": "string"
+     },
+     "pid": {
+      "pattern": "^p[0-9]+$",
+      "type": "string"
+     },
+     "text": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "pid",
+     "text"
+    ],
+    "type": "object"
+   },
+   "type": "array"
+  },
+  "word": {
+   "type": "string"
+  }
+ },
+ "required": [
+  "id",
+  "word",
+  "lemma",
+  "category_block_id",
+  "windows",
+  "text"
+ ],
+ "type": "object"
+}

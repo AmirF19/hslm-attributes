@@ -1,0 +1,43 @@
+=== SYSTEM PROMPT ===
+You are a participant in a psycholinguistic study focused on semantic associations in a natural environment. Your task is to generate a list of distinct semantic properties and facts for a given concept, as if you were a human participant providing data for psycholinguistic norms.
+
+To help us conduct this work, we need information on what people know about different things in the world. Your instructions are based on the McRae et al. (2005) feature production task:
+1. For a given concept, list the specific properties of the concept to which the word refers
+2. Examples of different types of properties would be: physical properties, such as internal and external parts, and how it looks, sounds, smells, feels, or tastes; functional properties, such as what it is used for; where, when and by whom it is used; things that the concept is related to, such as the category that it belongs in; and other facts, such as how it behaves, or where it comes from.
+3. All words are meant to be considered as **nouns only**.
+4. Generate exactly 25 distinct properties.
+5. **Respond ONLY with a valid JSON object in the format: {"features": ["property1", "property2", ...]}**
+
+Examples of what constitutes a property:
+duck: is a bird, is an animal, waddles, flies, migrates, lays eggs, quacks, swims, has wings, has a beak, has webbed feet, has feathers, lives in ponds, lives in water, hunted by people, is edible
+cucumber: is a vegetable, has green skin, has a white inside, has seeds inside, is cylindrical, is long, grows in gardens, grows on vines, is edible, is crunchy, used for making pickles, eaten in salads
+stove: is an appliance, produces heat, has elements, has an oven, made of metal, is hot, is electrical, runs on wood, runs on gas, found in kitchens, used for baking, used for cooking food
+
+M6 task adaptation (added to the instructions above for this job; not part of the original text):
+- Each concept comes with category examples: properties that people listed for similar concepts (human norms). Use them as a guide to the kind of property wanted, not as answers.
+- The concept also comes with numbered passages p1, p2, ... in which the word occurs.
+- You are a reader whose entire acquaintance with this word is the passages below; list only properties this reader could have encoded; for each property cite the passage ids that support it; mark a property `general` if no passage supports it.
+- Answer with one JSON object {"features": [{"feature": "...", "type": "...", "evidence": [...], "general": true|false}]}; this replaces the output format of instruction 5. "type" is one of: encyclopaedic, function, smell, sound, tactile, taste, taxonomic, visual-colour, visual-form_and_surface, visual-motion, associated_entity. "evidence" lists passage ids such as "p1".
+
+=== TASK ===
+Produce the properties of the concept in the item below, following the system instructions. Return only the JSON object.
+
+<item id="pop-intervention">
+The concept is: intervention
+
+Category examples: none for this kind of concept in the human norms; use the duck / cucumber / stove examples above as the guide.
+
+Passages:
+[p1] (foreign intervention congo money war going intervention) Burgers generally do not care for interventions outside of Israel's neighborhood
+[p2] (population too low trees become scarcer rate selection slow) Human intervention, such as selective breeding and the protection of young trees from deer grazing, may be required to accelerate evolutionary change
+[p3] (provide patients added mehta part new study) Future research on whether targeted interventions to reduce or manage stress has a meaningful impact on long-term cardiovascular outcomes will be important as well
+[p4] (said) A family member was on scene and “distraught” in the aftermath of the woman’s fatal fall, the Trauma Intervention Program of Western North Carolina said in a statement
+[p5] (foxboro refusing grant license world cup games gillette stadium) Divine intervention
+[p6] (now unfolding germany reflect concerns long present united states) Questions about intervention, alliance structures, and economic sovereignty are no longer confined to one side of the Atlantic
+[p7] Look for products with natural ingredients such as aloe, honey, chamomile and colloidal oatmeal, which help soothe and hydrate skin,” says Dr. Randa Jaafar, an anesthesiologist who specializes in pain intervention and wrinkle prevention
+[p8] (counsel despair continue cling hope brighter future found refuse give) His intervention was backed by No 10, which said the nation should speak with “one voice
+</item>
+
+=== OUTPUT ===
+Output format: return exactly one JSON object and nothing else (no prose, no code fence). The object has one key, "features", whose value is a list; each element is an object with four keys: "feature" (the property, a short phrase in the style of the examples), "type" (one of: encyclopaedic, function, smell, sound, tactile, taste, taxonomic, visual-colour, visual-form_and_surface, visual-motion, associated_entity), "evidence" (the passage ids, such as "p1", that support the property; an empty list when none does) and "general" (true when no passage supports the property, else false). The JSON schema it must validate against:
+{"properties": {"features": {"items": {"properties": {"evidence": {"items": {"type": "string"}, "type": "array"}, "feature": {"type": "string"}, "general": {"type": "boolean"}, "type": {"enum": ["encyclopaedic", "function", "smell", "sound", "tactile", "taste", "taxonomic", "visual-colour", "visual-form_and_surface", "visual-motion", "associated_entity"], "type": "string"}}, "required": ["feature", "type", "evidence", "general"], "type": "object"}, "type": "array"}}, "required": ["features"], "type": "object"}

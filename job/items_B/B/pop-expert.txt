@@ -1,0 +1,43 @@
+=== SYSTEM PROMPT ===
+You are a participant in a psycholinguistic study focused on semantic associations in a natural environment. Your task is to generate a list of distinct semantic properties and facts for a given concept, as if you were a human participant providing data for psycholinguistic norms.
+
+To help us conduct this work, we need information on what people know about different things in the world. Your instructions are based on the McRae et al. (2005) feature production task:
+1. For a given concept, list the specific properties of the concept to which the word refers
+2. Examples of different types of properties would be: physical properties, such as internal and external parts, and how it looks, sounds, smells, feels, or tastes; functional properties, such as what it is used for; where, when and by whom it is used; things that the concept is related to, such as the category that it belongs in; and other facts, such as how it behaves, or where it comes from.
+3. All words are meant to be considered as **nouns only**.
+4. Generate exactly 25 distinct properties.
+5. **Respond ONLY with a valid JSON object in the format: {"features": ["property1", "property2", ...]}**
+
+Examples of what constitutes a property:
+duck: is a bird, is an animal, waddles, flies, migrates, lays eggs, quacks, swims, has wings, has a beak, has webbed feet, has feathers, lives in ponds, lives in water, hunted by people, is edible
+cucumber: is a vegetable, has green skin, has a white inside, has seeds inside, is cylindrical, is long, grows in gardens, grows on vines, is edible, is crunchy, used for making pickles, eaten in salads
+stove: is an appliance, produces heat, has elements, has an oven, made of metal, is hot, is electrical, runs on wood, runs on gas, found in kitchens, used for baking, used for cooking food
+
+M6 task adaptation (added to the instructions above for this job; not part of the original text):
+- Each concept comes with category examples: properties that people listed for similar concepts (human norms). Use them as a guide to the kind of property wanted, not as answers.
+- The concept also comes with numbered passages p1, p2, ... in which the word occurs.
+- You are a reader whose entire acquaintance with this word is the passages below; list only properties this reader could have encoded; for each property cite the passage ids that support it; mark a property `general` if no passage supports it.
+- Answer with one JSON object {"features": [{"feature": "...", "type": "...", "evidence": [...], "general": true|false}]}; this replaces the output format of instruction 5. "type" is one of: encyclopaedic, function, smell, sound, tactile, taste, taxonomic, visual-colour, visual-form_and_surface, visual-motion, associated_entity. "evidence" lists passage ids such as "p1".
+
+=== TASK ===
+Produce the properties of the concept in the item below, following the system instructions. Return only the JSON object.
+
+<item id="pop-expert">
+The concept is: experts
+
+Category examples: none for this kind of concept in the human norms; use the duck / cucumber / stove examples above as the guide.
+
+Passages:
+[p1] (guidelines said) Here's a handy summary of which foods are back — and how federal guidance and nutrition experts say they should be consumed
+[p2] (u s around children die measles complications year) Public health experts told Salon they’re concerned that under the Trump administration, measles infections are already becoming endemic and normalized, and that we will see outbreaks as frequently as we did in the 1990s
+[p3] ... and McCarthy announced a tentative deal on Saturday night to raise the $31.5 trillion debt limit for two years while also cutting federal spending, just days before the United States is set to default on its commitments—which experts say would have devastating impacts to the global economy
+[p4] (celebration) Dallas Southern Pride’s events over Juneteenth weekend included everything from presentations from health experts to dancing late into the night
+[p5] (experts read find more) Make sure that you also check out our horse racing expert Ron Wood’s Royal Ascot Day 5 tips and his Ascot Lucky 15 picks
+[p6] (problems severe calcification risk cardiovascular event compared women calcium arteries) Experts say the results do not mean mammograms should replace traditional heart screenings such as blood pressure or cholesterol tests
+[p7] We’re partnering with the Foundation for Individual Rights and Expression (FIRE) to bring together four leading experts who will debate the question: Is designing babies unethical—or a moral imperative
+[p8] (appealed ziklag's architects saw potential sequel bigger more moneyed stage) Experts believe they brokered the alliance between Rosas and Donnelly, who describes “copy-pasting” his playbook
+</item>
+
+=== OUTPUT ===
+Output format: return exactly one JSON object and nothing else (no prose, no code fence). The object has one key, "features", whose value is a list; each element is an object with four keys: "feature" (the property, a short phrase in the style of the examples), "type" (one of: encyclopaedic, function, smell, sound, tactile, taste, taxonomic, visual-colour, visual-form_and_surface, visual-motion, associated_entity), "evidence" (the passage ids, such as "p1", that support the property; an empty list when none does) and "general" (true when no passage supports the property, else false). The JSON schema it must validate against:
+{"properties": {"features": {"items": {"properties": {"evidence": {"items": {"type": "string"}, "type": "array"}, "feature": {"type": "string"}, "general": {"type": "boolean"}, "type": {"enum": ["encyclopaedic", "function", "smell", "sound", "tactile", "taste", "taxonomic", "visual-colour", "visual-form_and_surface", "visual-motion", "associated_entity"], "type": "string"}}, "required": ["feature", "type", "evidence", "general"], "type": "object"}, "type": "array"}}, "required": ["features"], "type": "object"}

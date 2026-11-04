@@ -1,0 +1,48 @@
+=== SYSTEM PROMPT ===
+You are a participant in a psycholinguistic study focused on semantic associations in a natural environment. Your task is to generate a list of distinct semantic properties and facts for a given concept, as if you were a human participant providing data for psycholinguistic norms.
+
+To help us conduct this work, we need information on what people know about different things in the world. Your instructions are based on the McRae et al. (2005) feature production task:
+1. For a given concept, list the specific properties of the concept to which the word refers
+2. Examples of different types of properties would be: physical properties, such as internal and external parts, and how it looks, sounds, smells, feels, or tastes; functional properties, such as what it is used for; where, when and by whom it is used; things that the concept is related to, such as the category that it belongs in; and other facts, such as how it behaves, or where it comes from.
+3. All words are meant to be considered as **nouns only**.
+4. Generate exactly 25 distinct properties.
+5. **Respond ONLY with a valid JSON object in the format: {"features": ["property1", "property2", ...]}**
+
+Examples of what constitutes a property:
+duck: is a bird, is an animal, waddles, flies, migrates, lays eggs, quacks, swims, has wings, has a beak, has webbed feet, has feathers, lives in ponds, lives in water, hunted by people, is edible
+cucumber: is a vegetable, has green skin, has a white inside, has seeds inside, is cylindrical, is long, grows in gardens, grows on vines, is edible, is crunchy, used for making pickles, eaten in salads
+stove: is an appliance, produces heat, has elements, has an oven, made of metal, is hot, is electrical, runs on wood, runs on gas, found in kitchens, used for baking, used for cooking food
+
+M6 task adaptation (added to the instructions above for this job; not part of the original text):
+- Each concept comes with category examples: properties that people listed for similar concepts (human norms). Use them as a guide to the kind of property wanted, not as answers.
+- The concept also comes with numbered passages p1, p2, ... in which the word occurs.
+- You are a reader whose entire acquaintance with this word is the passages below; list only properties this reader could have encoded; for each property cite the passage ids that support it; mark a property `general` if no passage supports it.
+- Answer with one JSON object {"features": [{"feature": "...", "type": "...", "evidence": [...], "general": true|false}]}; this replaces the output format of instruction 5. "type" is one of: encyclopaedic, function, smell, sound, tactile, taste, taxonomic, visual-colour, visual-form_and_surface, visual-motion, associated_entity. "evidence" lists passage ids such as "p1".
+
+=== TASK ===
+Produce the properties of the concept in the item below, following the system instructions. Return only the JSON object.
+
+<item id="pop-male">
+The concept is: male
+
+Category examples (properties people listed for similar concepts):
+ostrich: a bird, has feathers, has a long neck, has a neck, sticks head in sand, has legs, lays eggs, cannot fly, has long legs, is large
+penguin: is black, a bird, is white, has a beak, cannot fly, waddles, swims, lives in cold climates, an animal, has feet
+tiger: has stripes, a carnivore, an animal, has teeth, lives in jungles, a feline, is black, is dangerous, lives in africa, a cat
+robin: a bird, eats, lays eggs, builds nests, has a breast, eats worms, has a red breast, flies, lays blue eggs, symbol of spring
+cow: produces milk, an animal, eats, eats grass, is large, has 4 legs, has legs, a mammal, moos, is white
+
+Passages:
+[p1] So if there was a female politician with policies and views tha align with yours, and a male politician who is an intersectional feminist lgbtqa activist Jew, you would rather vote for the male politician on the basis of his gender
+[p2] (ais of course most talked trans transgender) You know, the whole business of males pretending to be female, and vice versa
+[p3] ... remains from Temple of Solomon >Luciferianism predicts/wants a new age of transhumanism; Kaballah and freemasonry believe one attains perfection by mastering and combining male and female energies >Twin Towers destroyed in consciousness altering event at start of millenium to usher in this new era of transhumanism >Replaced ...
+[p4] ... brain damage >vaccines while still in the womb >infant genital mutilation >more vaccines after birth >xenoestrogenic compounds in plastics >xenoestrogenic compounds in foods yes, and money makes a small sect of people continue to fuck males while the herd accepts it as the norm because they're all victims
+[p5] (women spying naked) Women have complained of voyeuristic behaviour from some trans women, who were born male, using the Kenwood Ladies’ Pond, which they say has made left them feeling “violated
+[p6] (such already get feel same way) It was like this with MGTOW, too, when I was learning about female vs male nature, divorce laws, feminist family courts, first-second-third wave feminism, hypergamy, Paretor's 80/20 Rule, etc. Once you learn the basics and have ingested the red pill, it just becomes porn-like
+[p7] (game) The videos are cut together with dramatic music and screaming fans to give the impression of a male highlights reel
+[p8] ... I ask that is because as a civil rights lawyer, I have learned so many times, in having to deal with law enforcement, that there usually is not a perception of a threat when it is a young white male, even if they are carrying a long gun
+</item>
+
+=== OUTPUT ===
+Output format: return exactly one JSON object and nothing else (no prose, no code fence). The object has one key, "features", whose value is a list; each element is an object with four keys: "feature" (the property, a short phrase in the style of the examples), "type" (one of: encyclopaedic, function, smell, sound, tactile, taste, taxonomic, visual-colour, visual-form_and_surface, visual-motion, associated_entity), "evidence" (the passage ids, such as "p1", that support the property; an empty list when none does) and "general" (true when no passage supports the property, else false). The JSON schema it must validate against:
+{"properties": {"features": {"items": {"properties": {"evidence": {"items": {"type": "string"}, "type": "array"}, "feature": {"type": "string"}, "general": {"type": "boolean"}, "type": {"enum": ["encyclopaedic", "function", "smell", "sound", "tactile", "taste", "taxonomic", "visual-colour", "visual-form_and_surface", "visual-motion", "associated_entity"], "type": "string"}}, "required": ["feature", "type", "evidence", "general"], "type": "object"}, "type": "array"}}, "required": ["features"], "type": "object"}

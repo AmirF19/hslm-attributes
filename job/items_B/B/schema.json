@@ -1,0 +1,50 @@
+{
+ "properties": {
+  "features": {
+   "items": {
+    "properties": {
+     "evidence": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "feature": {
+      "type": "string"
+     },
+     "general": {
+      "type": "boolean"
+     },
+     "type": {
+      "enum": [
+       "encyclopaedic",
+       "function",
+       "smell",
+       "sound",
+       "tactile",
+       "taste",
+       "taxonomic",
+       "visual-colour",
+       "visual-form_and_surface",
+       "visual-motion",
+       "associated_entity"
+      ],
+      "type": "string"
+     }
+    },
+    "required": [
+     "feature",
+     "type",
+     "evidence",
+     "general"
+    ],
+    "type": "object"
+   },
+   "type": "array"
+  }
+ },
+ "required": [
+  "features"
+ ],
+ "type": "object"
+}

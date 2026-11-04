@@ -1,0 +1,43 @@
+=== SYSTEM PROMPT ===
+You are a participant in a psycholinguistic study focused on semantic associations in a natural environment. Your task is to generate a list of distinct semantic properties and facts for a given concept, as if you were a human participant providing data for psycholinguistic norms.
+
+To help us conduct this work, we need information on what people know about different things in the world. Your instructions are based on the McRae et al. (2005) feature production task:
+1. For a given concept, list the specific properties of the concept to which the word refers
+2. Examples of different types of properties would be: physical properties, such as internal and external parts, and how it looks, sounds, smells, feels, or tastes; functional properties, such as what it is used for; where, when and by whom it is used; things that the concept is related to, such as the category that it belongs in; and other facts, such as how it behaves, or where it comes from.
+3. All words are meant to be considered as **nouns only**.
+4. Generate exactly 25 distinct properties.
+5. **Respond ONLY with a valid JSON object in the format: {"features": ["property1", "property2", ...]}**
+
+Examples of what constitutes a property:
+duck: is a bird, is an animal, waddles, flies, migrates, lays eggs, quacks, swims, has wings, has a beak, has webbed feet, has feathers, lives in ponds, lives in water, hunted by people, is edible
+cucumber: is a vegetable, has green skin, has a white inside, has seeds inside, is cylindrical, is long, grows in gardens, grows on vines, is edible, is crunchy, used for making pickles, eaten in salads
+stove: is an appliance, produces heat, has elements, has an oven, made of metal, is hot, is electrical, runs on wood, runs on gas, found in kitchens, used for baking, used for cooking food
+
+M6 task adaptation (added to the instructions above for this job; not part of the original text):
+- Each concept comes with category examples: properties that people listed for similar concepts (human norms). Use them as a guide to the kind of property wanted, not as answers.
+- The concept also comes with numbered passages p1, p2, ... in which the word occurs.
+- You are a reader whose entire acquaintance with this word is the passages below; list only properties this reader could have encoded; for each property cite the passage ids that support it; mark a property `general` if no passage supports it.
+- Answer with one JSON object {"features": [{"feature": "...", "type": "...", "evidence": [...], "general": true|false}]}; this replaces the output format of instruction 5. "type" is one of: encyclopaedic, function, smell, sound, tactile, taste, taxonomic, visual-colour, visual-form_and_surface, visual-motion, associated_entity. "evidence" lists passage ids such as "p1".
+
+=== TASK ===
+Produce the properties of the concept in the item below, following the system instructions. Return only the JSON object.
+
+<item id="pop-gift">
+The concept is: gift
+
+Category examples: none for this kind of concept in the human norms; use the duck / cucumber / stove examples above as the guide.
+
+Passages:
+[p1] The annual report, published Thursday in the Federal Register by the department’s Bureau of Protocol, covers calendar year 2024 and does not include any gifts given to President Donald Trump or his administration in the first year of Trump’s second term
+[p2] (recruit new supporters israel) The cunning Jew will shower unsuspecting non-Jews with gifts and compliments and win them over with their seemingly warm embrace all the while flooding their country with immigrants, engineering stock market crashes, brainwashing their youth with Marxism, and plunging their troops into wars to secure the terrorist ...
+[p3] (close friends too) Not just a few months some acquaintance brought me fresh fruit as a gift and I showed his ass the door
+[p4] (fear played part return religion later wrote memoir rage god) The gift of fear
+[p5] (select sign newsletter selection shop smarter best valentine's day gifts) All of the gifts below are based on our previous reporting, NBC Select Award winners, personal recommendations from our editors and brands we’ve tried, loved and covered before
+[p6] 23 Therefore if thou bring thy gift to the altar, and there rememberest that thy brother hath ought against thee; 24 Leave there thy gift before the altar, and go thy way; first be reconciled to thy brother, and then come and offer thy gift
+[p7] While most of the roasting between one another was typically off the cuff, the comedian shared a Berens family Christmas tradition they call "gimmicks," which takes place alongside their "Secret Santa" gift exchange
+[p8] (flight) But what if you only need a larger baggage allowance on one leg – for example, if you’re taking some gifts with you at Christmas, or bringing home shopping from your holiday
+</item>
+
+=== OUTPUT ===
+Output format: return exactly one JSON object and nothing else (no prose, no code fence). The object has one key, "features", whose value is a list; each element is an object with four keys: "feature" (the property, a short phrase in the style of the examples), "type" (one of: encyclopaedic, function, smell, sound, tactile, taste, taxonomic, visual-colour, visual-form_and_surface, visual-motion, associated_entity), "evidence" (the passage ids, such as "p1", that support the property; an empty list when none does) and "general" (true when no passage supports the property, else false). The JSON schema it must validate against:
+{"properties": {"features": {"items": {"properties": {"evidence": {"items": {"type": "string"}, "type": "array"}, "feature": {"type": "string"}, "general": {"type": "boolean"}, "type": {"enum": ["encyclopaedic", "function", "smell", "sound", "tactile", "taste", "taxonomic", "visual-colour", "visual-form_and_surface", "visual-motion", "associated_entity"], "type": "string"}}, "required": ["feature", "type", "evidence", "general"], "type": "object"}, "type": "array"}}, "required": ["features"], "type": "object"}

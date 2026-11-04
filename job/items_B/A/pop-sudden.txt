@@ -1,0 +1,43 @@
+=== SYSTEM PROMPT ===
+You are a participant in a psycholinguistic study focused on semantic associations in a natural environment. Your task is to generate a list of distinct semantic properties and facts for a given concept, as if you were a human participant providing data for psycholinguistic norms.
+
+To help us conduct this work, we need information on what people know about different things in the world. Your instructions are based on the McRae et al. (2005) feature production task:
+1. For a given concept, list the specific properties of the concept to which the word refers
+2. Examples of different types of properties would be: physical properties, such as internal and external parts, and how it looks, sounds, smells, feels, or tastes; functional properties, such as what it is used for; where, when and by whom it is used; things that the concept is related to, such as the category that it belongs in; and other facts, such as how it behaves, or where it comes from.
+3. All words are meant to be considered as **nouns only**.
+4. Generate exactly 25 distinct properties.
+5. **Respond ONLY with a valid JSON object in the format: {"features": ["property1", "property2", ...]}**
+
+Examples of what constitutes a property:
+duck: is a bird, is an animal, waddles, flies, migrates, lays eggs, quacks, swims, has wings, has a beak, has webbed feet, has feathers, lives in ponds, lives in water, hunted by people, is edible
+cucumber: is a vegetable, has green skin, has a white inside, has seeds inside, is cylindrical, is long, grows in gardens, grows on vines, is edible, is crunchy, used for making pickles, eaten in salads
+stove: is an appliance, produces heat, has elements, has an oven, made of metal, is hot, is electrical, runs on wood, runs on gas, found in kitchens, used for baking, used for cooking food
+
+M6 task adaptation (added to the instructions above for this job; not part of the original text):
+- Each concept comes with category examples: properties that people listed for similar concepts (human norms). Use them as a guide to the kind of property wanted, not as answers.
+- The concept also comes with numbered passages p1, p2, ... in which the word occurs.
+- You are a reader whose entire acquaintance with this word is the passages below; list only properties this reader could have encoded; for each property cite the passage ids that support it; mark a property `general` if no passage supports it.
+- Answer with one JSON object {"features": [{"feature": "...", "type": "...", "evidence": [...], "general": true|false}]}; this replaces the output format of instruction 5. "type" is one of: encyclopaedic, function, smell, sound, tactile, taste, taxonomic, visual-colour, visual-form_and_surface, visual-motion, associated_entity. "evidence" lists passage ids such as "p1".
+
+=== TASK ===
+Produce the properties of the concept in the item below, following the system instructions. Return only the JSON object.
+
+<item id="pop-sudden">
+The concept is: sudden
+
+Category examples: none for this kind of concept in the human norms; use the duck / cucumber / stove examples above as the guide.
+
+Passages:
+[p1] (holocaust families now working getting back watches vast numbers) All of a sudden, more and more of these high-end Richard Mille watches started showing up stolen, being reported to me every single week, from holiday locations like Monte Carlo, Milan, London and New York,” Marinello, an attorney who worked for 20 years in New York, said
+[p2] (said) This Is Crazy’: Fox’s MacCallum Confronts Dem Rep Eric Swalwell On Biden’s Sudden Disappearance pic.twitter.com/e9MlN2QnOC
+[p3] (conspiracy theories family telling years absurd) I remember him telling his friend ‘I’m on Telegram, and all of a sudden I have these followers,’” Protzman’s mother recalled
+[p4] (woman child acres mule lose chains) Am I wrong to have this flash of real patriotism all of a sudden
+[p5] Weiss, a critic of the legacy media, is now tasked with reviving one of its most revered institutions, and her sudden rise as a network chief was sure to ruffle some feathers
+[p6] (barrel supertankers babel mandab little narrow strait yemen africa) Now, all of a sudden, if you want to get that seven, eight million barrels a day out of that pipeline that's in Yambu, you've now got to sail all the way around Africa, go through the Suez Canal and go to Yambu
+[p7] (hip hop died pennsylvania prostate cancer thursday according lawyer) Bambaataa’s sudden death was met with an outpouring of condolences from friends, family and fans across the world, who paid tribute to his profound and unmistakable impact on one of the world’s most popular and politically influential music genres
+[p8] (impulse such sudden rage rather as apremeditatedcrime) Passion in this case refers to the sudden anger one feels when confronted in the moment with something they didn't know how to properly react to, not something they planned and then posted to the internet for attention Amen
+</item>
+
+=== OUTPUT ===
+Output format: return exactly one JSON object and nothing else (no prose, no code fence). The object has one key, "features", whose value is a list; each element is an object with four keys: "feature" (the property, a short phrase in the style of the examples), "type" (one of: encyclopaedic, function, smell, sound, tactile, taste, taxonomic, visual-colour, visual-form_and_surface, visual-motion, associated_entity), "evidence" (the passage ids, such as "p1", that support the property; an empty list when none does) and "general" (true when no passage supports the property, else false). The JSON schema it must validate against:
+{"properties": {"features": {"items": {"properties": {"evidence": {"items": {"type": "string"}, "type": "array"}, "feature": {"type": "string"}, "general": {"type": "boolean"}, "type": {"enum": ["encyclopaedic", "function", "smell", "sound", "tactile", "taste", "taxonomic", "visual-colour", "visual-form_and_surface", "visual-motion", "associated_entity"], "type": "string"}}, "required": ["feature", "type", "evidence", "general"], "type": "object"}, "type": "array"}}, "required": ["features"], "type": "object"}

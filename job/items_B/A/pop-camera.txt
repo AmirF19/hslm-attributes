@@ -1,0 +1,48 @@
+=== SYSTEM PROMPT ===
+You are a participant in a psycholinguistic study focused on semantic associations in a natural environment. Your task is to generate a list of distinct semantic properties and facts for a given concept, as if you were a human participant providing data for psycholinguistic norms.
+
+To help us conduct this work, we need information on what people know about different things in the world. Your instructions are based on the McRae et al. (2005) feature production task:
+1. For a given concept, list the specific properties of the concept to which the word refers
+2. Examples of different types of properties would be: physical properties, such as internal and external parts, and how it looks, sounds, smells, feels, or tastes; functional properties, such as what it is used for; where, when and by whom it is used; things that the concept is related to, such as the category that it belongs in; and other facts, such as how it behaves, or where it comes from.
+3. All words are meant to be considered as **nouns only**.
+4. Generate exactly 25 distinct properties.
+5. **Respond ONLY with a valid JSON object in the format: {"features": ["property1", "property2", ...]}**
+
+Examples of what constitutes a property:
+duck: is a bird, is an animal, waddles, flies, migrates, lays eggs, quacks, swims, has wings, has a beak, has webbed feet, has feathers, lives in ponds, lives in water, hunted by people, is edible
+cucumber: is a vegetable, has green skin, has a white inside, has seeds inside, is cylindrical, is long, grows in gardens, grows on vines, is edible, is crunchy, used for making pickles, eaten in salads
+stove: is an appliance, produces heat, has elements, has an oven, made of metal, is hot, is electrical, runs on wood, runs on gas, found in kitchens, used for baking, used for cooking food
+
+M6 task adaptation (added to the instructions above for this job; not part of the original text):
+- Each concept comes with category examples: properties that people listed for similar concepts (human norms). Use them as a guide to the kind of property wanted, not as answers.
+- The concept also comes with numbered passages p1, p2, ... in which the word occurs.
+- You are a reader whose entire acquaintance with this word is the passages below; list only properties this reader could have encoded; for each property cite the passage ids that support it; mark a property `general` if no passage supports it.
+- Answer with one JSON object {"features": [{"feature": "...", "type": "...", "evidence": [...], "general": true|false}]}; this replaces the output format of instruction 5. "type" is one of: encyclopaedic, function, smell, sound, tactile, taste, taxonomic, visual-colour, visual-form_and_surface, visual-motion, associated_entity. "evidence" lists passage ids such as "p1".
+
+=== TASK ===
+Produce the properties of the concept in the item below, following the system instructions. Return only the JSON object.
+
+<item id="pop-camera">
+The concept is: camera
+
+Category examples (properties people listed for similar concepts):
+fridge: used for storage, found in kitchens, used for storing food, has a freezer, is cold, has doors, is large, an appliance, is electrical, is heavy
+barn: used for storage, found on farms, used for animals, made of wood, used for storing hay, is large, is red, a building, found in the country, has a hay loft
+axe: used for chopping, used for chopping wood, has a handle, is sharp, a tool, has a wooden handle, used by lumberjacks, is heavy, has a blade, is dangerous
+limousine: a car, requires drivers, is long, is expensive, used by rich people, is black, is white, has tinted windows, is luxurious, used by many passengers
+pistol: fires, fires bullets, a weapon, a gun, used by the police, used for killing, is dangerous, is hand held, is small, is loud
+
+Passages:
+[p1] (started using) I’ve never consistently worn foundation — I’m a tinted sunscreen girl through and through — but as I’ve done more on-camera work this year, I had to add it to my makeup routine more often
+[p2] (only months little two block gov nigger neighborhood san francisco) Cameras everywhere
+[p3] (received say scratch recordings) I don't want the deans hearing that I said that!' he said, still on camera
+[p4] (arguments) Trump turned the civil trial into a series of campaign appearances, speaking to TV cameras several times each day outside of the courtroom when he was there
+[p5] Wisconsin police were on the smelly trail of a "serial defecator" until the woman was tracked down through the use of a drone and trail cameras
+[p6] Utah County's public case update says that Robinson's next major court dates are an April 17 hearing on cameras in the courtroom and a May 18-20 preliminary hearing, giving Kolvet's broadside immediate stakes as the case moves deeper into pretrial proceedings
+[p7] (worker party china trumptasrds here always wearing stupid umbrellas) Is to hide from the cameras
+[p8] (quackery hillary seems love outdoors) Her personal medical team is just outside the view of camera in case she collapses again
+</item>
+
+=== OUTPUT ===
+Output format: return exactly one JSON object and nothing else (no prose, no code fence). The object has one key, "features", whose value is a list; each element is an object with four keys: "feature" (the property, a short phrase in the style of the examples), "type" (one of: encyclopaedic, function, smell, sound, tactile, taste, taxonomic, visual-colour, visual-form_and_surface, visual-motion, associated_entity), "evidence" (the passage ids, such as "p1", that support the property; an empty list when none does) and "general" (true when no passage supports the property, else false). The JSON schema it must validate against:
+{"properties": {"features": {"items": {"properties": {"evidence": {"items": {"type": "string"}, "type": "array"}, "feature": {"type": "string"}, "general": {"type": "boolean"}, "type": {"enum": ["encyclopaedic", "function", "smell", "sound", "tactile", "taste", "taxonomic", "visual-colour", "visual-form_and_surface", "visual-motion", "associated_entity"], "type": "string"}}, "required": ["feature", "type", "evidence", "general"], "type": "object"}, "type": "array"}}, "required": ["features"], "type": "object"}

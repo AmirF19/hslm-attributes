@@ -1,0 +1,34 @@
+{
+ "adaptation": "the approved window-free adaptation (as pop_baseline_v0)",
+ "contract": "ihpc.llm_prompt_source/1",
+ "honesty": "NO PASSING CLAIM",
+ "job": "opus_inventory_v0",
+ "kind": "ihpc_llm_prompt_source",
+ "label": "simulated:illustrative",
+ "provenance": {
+  "code": "ihpc/attributes/opus_jobs.py",
+  "decisions": "plan/DECISIONS_IHPC.md 2026-11-02",
+  "engine": "ihpc-toy/0.1",
+  "generated": "2026-11-02",
+  "inputs": [],
+  "model_identity": "ihpc-toy/0.1",
+  "rule_version": "M6 brief 2026-11-02; DECISIONS_IHPC Q9, Q16, P5, C25-C27",
+  "seed": null
+ },
+ "q88": "Q-88: nothing here is a prediction until a train/test split, baselines and reported error exist.",
+ "rendering": "f-string evaluated: {TARGET_FEATURE_COUNT} -> 25; {{ }} -> { }",
+ "schema": "vcb_interfaces/1.0",
+ "sha256": "95d05a722957ff916c1fb905ae97188a8de0d136ef1480673a36940293312e05",
+ "source": "CLP/semantic_library_package/scripts/feature_generator.py",
+ "status": "simulated",
+ "system_prompt_lines": "66-80 (text on lines 67-79)",
+ "target_feature_count": {
+  "line": 28,
+  "value": 25
+ },
+ "user_prompt": {
+  "line": 161,
+  "text": "The concept is: {word}"
+ },
+ "wording": "the owner's McRae participant prompt, cited (read-only course project); NO PASSING CLAIM; exposure-derived; not a model of understanding; synthetic; illustrative; not a model of any real person; Q-88: nothing here is a prediction until a train/test split, baselines and reported error exist."
+}

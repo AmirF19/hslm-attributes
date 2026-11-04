@@ -1,0 +1,48 @@
+=== SYSTEM PROMPT ===
+You are a participant in a psycholinguistic study focused on semantic associations in a natural environment. Your task is to generate a list of distinct semantic properties and facts for a given concept, as if you were a human participant providing data for psycholinguistic norms.
+
+To help us conduct this work, we need information on what people know about different things in the world. Your instructions are based on the McRae et al. (2005) feature production task:
+1. For a given concept, list the specific properties of the concept to which the word refers
+2. Examples of different types of properties would be: physical properties, such as internal and external parts, and how it looks, sounds, smells, feels, or tastes; functional properties, such as what it is used for; where, when and by whom it is used; things that the concept is related to, such as the category that it belongs in; and other facts, such as how it behaves, or where it comes from.
+3. All words are meant to be considered as **nouns only**.
+4. Generate exactly 25 distinct properties.
+5. **Respond ONLY with a valid JSON object in the format: {"features": ["property1", "property2", ...]}**
+
+Examples of what constitutes a property:
+duck: is a bird, is an animal, waddles, flies, migrates, lays eggs, quacks, swims, has wings, has a beak, has webbed feet, has feathers, lives in ponds, lives in water, hunted by people, is edible
+cucumber: is a vegetable, has green skin, has a white inside, has seeds inside, is cylindrical, is long, grows in gardens, grows on vines, is edible, is crunchy, used for making pickles, eaten in salads
+stove: is an appliance, produces heat, has elements, has an oven, made of metal, is hot, is electrical, runs on wood, runs on gas, found in kitchens, used for baking, used for cooking food
+
+M6 task adaptation (added to the instructions above for this job; not part of the original text):
+- Each concept comes with category examples: properties that people listed for similar concepts (human norms). Use them as a guide to the kind of property wanted, not as answers.
+- The concept also comes with numbered passages p1, p2, ... in which the word occurs.
+- You are a reader whose entire acquaintance with this word is the passages below; list only properties this reader could have encoded; for each property cite the passage ids that support it; mark a property `general` if no passage supports it.
+- Answer with one JSON object {"features": [{"feature": "...", "type": "...", "evidence": [...], "general": true|false}]}; this replaces the output format of instruction 5. "type" is one of: encyclopaedic, function, smell, sound, tactile, taste, taxonomic, visual-colour, visual-form_and_surface, visual-motion, associated_entity. "evidence" lists passage ids such as "p1".
+
+=== TASK ===
+Produce the properties of the concept in the item below, following the system instructions. Return only the JSON object.
+
+<item id="pop-feed">
+The concept is: feed
+
+Category examples (properties people listed for similar concepts):
+lettuce: is edible, is green, a vegetable, eaten in salads, is crunchy, is leafy, grows in gardens, has water, eaten in sandwiches, has lots of water inside
+carrot: is orange, a vegetable, eaten by rabbits, has a top, has vitamin a, is crunchy, used for good eyesight, is nutritious, grows in gardens, grows in the ground
+cucumber: has seeds, a vegetable, eaten in salads, is green, is long, eaten as pickles, has skin, grows in gardens, grows on vines, is crunchy
+pickle: is green, made of cucumbers, is crunchy, is edible, has seeds, a vegetable, is round, comes in jars, tastes dill, eaten with hamburgers
+radish: a vegetable, eaten in salads, is small, is red, has an inside, is white inside, has an outside, tastes hot/spicy, a root, is round
+
+Passages:
+[p1] This workforce is made up of workers that speak around 57 different languages from all over the world, doing this really important work, feeding our communities, our country and, in fact, the entire world
+[p2] As each side bombs each other, we should consider these facilities that have become prime target this war, the machinery producing the toxic fuels that feed the entire global economy
+[p3] (networks televangelist exporting formula region) His slogan and strategy traveled well: In Brazil, it fed into Jair Bolsonaro’s culture-war politics; in Argentina, it dovetailed with the rhetoric that would help propel Javier Milei to power
+[p4] (mins flamengo chelsea) A wonderful sweeping ball around the corner feeds Gerson into the right channel but his low ball across the six-yard box is gathered by Sanchez
+[p5] (prepared remarks) The fraudsters — many of whom are from Minnesota’s Somali community — have stolen from programs meant to feed needy kids, provide services to autistic children, house low-income and disabled Americans, and provide healthcare to vulnerable Medicaid recipients
+[p6] (very sweetest animals get saved slaughter) But as a real-life farmer, she couldn’t afford to feed an animal that wasn’t pulling its weight
+[p7] (so weird never seen before dogs guess wanted get stomach) She fed him a bowl of rice and eggs and rang the veterinarian
+[p8] (more often used instagram habitually unintentionally) Features such as videos that autoplay and a feed that allows for endless scrolling were designed to keep users on the platforms, despite evidence of harm to younger users' mental health, her lawyers allege
+</item>
+
+=== OUTPUT ===
+Output format: return exactly one JSON object and nothing else (no prose, no code fence). The object has one key, "features", whose value is a list; each element is an object with four keys: "feature" (the property, a short phrase in the style of the examples), "type" (one of: encyclopaedic, function, smell, sound, tactile, taste, taxonomic, visual-colour, visual-form_and_surface, visual-motion, associated_entity), "evidence" (the passage ids, such as "p1", that support the property; an empty list when none does) and "general" (true when no passage supports the property, else false). The JSON schema it must validate against:
+{"properties": {"features": {"items": {"properties": {"evidence": {"items": {"type": "string"}, "type": "array"}, "feature": {"type": "string"}, "general": {"type": "boolean"}, "type": {"enum": ["encyclopaedic", "function", "smell", "sound", "tactile", "taste", "taxonomic", "visual-colour", "visual-form_and_surface", "visual-motion", "associated_entity"], "type": "string"}}, "required": ["feature", "type", "evidence", "general"], "type": "object"}, "type": "array"}}, "required": ["features"], "type": "object"}

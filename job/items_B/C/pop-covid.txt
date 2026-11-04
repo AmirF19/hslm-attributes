@@ -1,0 +1,43 @@
+=== SYSTEM PROMPT ===
+You are a participant in a psycholinguistic study focused on semantic associations in a natural environment. Your task is to generate a list of distinct semantic properties and facts for a given concept, as if you were a human participant providing data for psycholinguistic norms.
+
+To help us conduct this work, we need information on what people know about different things in the world. Your instructions are based on the McRae et al. (2005) feature production task:
+1. For a given concept, list the specific properties of the concept to which the word refers
+2. Examples of different types of properties would be: physical properties, such as internal and external parts, and how it looks, sounds, smells, feels, or tastes; functional properties, such as what it is used for; where, when and by whom it is used; things that the concept is related to, such as the category that it belongs in; and other facts, such as how it behaves, or where it comes from.
+3. All words are meant to be considered as **nouns only**.
+4. Generate exactly 25 distinct properties.
+5. **Respond ONLY with a valid JSON object in the format: {"features": ["property1", "property2", ...]}**
+
+Examples of what constitutes a property:
+duck: is a bird, is an animal, waddles, flies, migrates, lays eggs, quacks, swims, has wings, has a beak, has webbed feet, has feathers, lives in ponds, lives in water, hunted by people, is edible
+cucumber: is a vegetable, has green skin, has a white inside, has seeds inside, is cylindrical, is long, grows in gardens, grows on vines, is edible, is crunchy, used for making pickles, eaten in salads
+stove: is an appliance, produces heat, has elements, has an oven, made of metal, is hot, is electrical, runs on wood, runs on gas, found in kitchens, used for baking, used for cooking food
+
+M6 task adaptation (added to the instructions above for this job; not part of the original text):
+- Each concept comes with category examples: properties that people listed for similar concepts (human norms). Use them as a guide to the kind of property wanted, not as answers.
+- The concept also comes with numbered passages p1, p2, ... in which the word occurs.
+- You are a reader whose entire acquaintance with this word is the passages below; list only properties this reader could have encoded; for each property cite the passage ids that support it; mark a property `general` if no passage supports it.
+- Answer with one JSON object {"features": [{"feature": "...", "type": "...", "evidence": [...], "general": true|false}]}; this replaces the output format of instruction 5. "type" is one of: encyclopaedic, function, smell, sound, tactile, taste, taxonomic, visual-colour, visual-form_and_surface, visual-motion, associated_entity. "evidence" lists passage ids such as "p1".
+
+=== TASK ===
+Produce the properties of the concept in the item below, following the system instructions. Return only the JSON object.
+
+<item id="pop-covid">
+The concept is: covid
+
+Category examples: none for this kind of concept in the human norms; use the duck / cucumber / stove examples above as the guide.
+
+Passages:
+[p1] (treat arthritis also higher risk) Given the sheer number of people affected by COVID-19 compared to influenza, these statistics are alarming and suggest that many more patients will likely develop high blood pressure in the future, which may present a major public health burden,” Dr. Tim Duong, a study author and professor ...
+[p2] (access facing enforcement seeking support) In Chicago, The Love Fridge Chicago, founded during the COVID-19 pandemic, continues to address food access and inequity through a citywide network of free community refrigerators, redirecting edible food away from landfills and into neighborhoods most impacted by food apartheid
+[p3] (covid pandemic) Today the lack of prioritization from the current administration and a cultural moment post the COVID-19 pandemic, in which online anti-vaccine rhetoric has spread like wildfire, have contributed to a lack of trust in vaccines and public health — ironic given COVID vaccine development was a landmark ...
+[p4] (grew orphan spirit loved unmoored floating life searching destiny) In his telling, the Covid lockdowns and the loss of in-person contact drew him to the church—and, in the process, helped him overcome a nine-year porn addiction
+[p5] ... urge that the platform “consider abortion as health care and direct to accurate health care resources,” treating abortion-related and reproductive rights content in the same way it treated Covid-19—including by proactively correcting misinformation—but that Meta has “categorically said that this is not a priority
+[p6] I’ve written about topics like KN95, N95 and disposable face masks, as well as at-home Covid tests, thermometers and disinfectants
+[p7] ... support system and sisterhood on the trail,” says Nicole Boyd, who co-founded Black Girls Hike RVA in the Richmond, Virginia, area during the COVID-19 pandemic with friend Shara Cade. ”It’s powerful to know that we can take up space like everyone else and bask in the ...
+[p8] (transport safer cycle routes connection come environmental cost) And our Amazon-gutted, Covid-confused town centres could be far better too
+</item>
+
+=== OUTPUT ===
+Output format: return exactly one JSON object and nothing else (no prose, no code fence). The object has one key, "features", whose value is a list; each element is an object with four keys: "feature" (the property, a short phrase in the style of the examples), "type" (one of: encyclopaedic, function, smell, sound, tactile, taste, taxonomic, visual-colour, visual-form_and_surface, visual-motion, associated_entity), "evidence" (the passage ids, such as "p1", that support the property; an empty list when none does) and "general" (true when no passage supports the property, else false). The JSON schema it must validate against:
+{"properties": {"features": {"items": {"properties": {"evidence": {"items": {"type": "string"}, "type": "array"}, "feature": {"type": "string"}, "general": {"type": "boolean"}, "type": {"enum": ["encyclopaedic", "function", "smell", "sound", "tactile", "taste", "taxonomic", "visual-colour", "visual-form_and_surface", "visual-motion", "associated_entity"], "type": "string"}}, "required": ["feature", "type", "evidence", "general"], "type": "object"}, "type": "array"}}, "required": ["features"], "type": "object"}

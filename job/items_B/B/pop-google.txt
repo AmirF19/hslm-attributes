@@ -1,0 +1,43 @@
+=== SYSTEM PROMPT ===
+You are a participant in a psycholinguistic study focused on semantic associations in a natural environment. Your task is to generate a list of distinct semantic properties and facts for a given concept, as if you were a human participant providing data for psycholinguistic norms.
+
+To help us conduct this work, we need information on what people know about different things in the world. Your instructions are based on the McRae et al. (2005) feature production task:
+1. For a given concept, list the specific properties of the concept to which the word refers
+2. Examples of different types of properties would be: physical properties, such as internal and external parts, and how it looks, sounds, smells, feels, or tastes; functional properties, such as what it is used for; where, when and by whom it is used; things that the concept is related to, such as the category that it belongs in; and other facts, such as how it behaves, or where it comes from.
+3. All words are meant to be considered as **nouns only**.
+4. Generate exactly 25 distinct properties.
+5. **Respond ONLY with a valid JSON object in the format: {"features": ["property1", "property2", ...]}**
+
+Examples of what constitutes a property:
+duck: is a bird, is an animal, waddles, flies, migrates, lays eggs, quacks, swims, has wings, has a beak, has webbed feet, has feathers, lives in ponds, lives in water, hunted by people, is edible
+cucumber: is a vegetable, has green skin, has a white inside, has seeds inside, is cylindrical, is long, grows in gardens, grows on vines, is edible, is crunchy, used for making pickles, eaten in salads
+stove: is an appliance, produces heat, has elements, has an oven, made of metal, is hot, is electrical, runs on wood, runs on gas, found in kitchens, used for baking, used for cooking food
+
+M6 task adaptation (added to the instructions above for this job; not part of the original text):
+- Each concept comes with category examples: properties that people listed for similar concepts (human norms). Use them as a guide to the kind of property wanted, not as answers.
+- The concept also comes with numbered passages p1, p2, ... in which the word occurs.
+- You are a reader whose entire acquaintance with this word is the passages below; list only properties this reader could have encoded; for each property cite the passage ids that support it; mark a property `general` if no passage supports it.
+- Answer with one JSON object {"features": [{"feature": "...", "type": "...", "evidence": [...], "general": true|false}]}; this replaces the output format of instruction 5. "type" is one of: encyclopaedic, function, smell, sound, tactile, taste, taxonomic, visual-colour, visual-form_and_surface, visual-motion, associated_entity. "evidence" lists passage ids such as "p1".
+
+=== TASK ===
+Produce the properties of the concept in the item below, following the system instructions. Return only the JSON object.
+
+<item id="pop-google">
+The concept is: google
+
+Category examples: none for this kind of concept in the human norms; use the duck / cucumber / stove examples above as the guide.
+
+Passages:
+[p1] The tech giant said it will remove Canadian news links from Google News — a personalized aggregator service available by web or app that highlights local news — and from Google Discover, a feature on mobile phones that helps people find content
+[p2] (thought going fight dennard says reading tears lawyer jargon) And so we have Google up, and I'm Googling different terms and we're trying to really understand the whole thing
+[p3] The main claim of the lawsuit, first brought by her mother two years ago before Kaley turned 18, is that Meta and Google are seeking to profit by hooking young children on their services despite knowing social media could impair their mental and behavioral well-being
+[p4] (personnel accused human rights abuses) A new investigation details how the tech giants Google and Amazon violated their own terms of service in a lucrative contract with the Israeli government to provide cloud computing and AI services used during Israel’s two-year assault on the Gaza Strip
+[p5] Last week, Warren Buffett’s Berkshire Hathaway announced it had bought more than 17.8 million shares of Alphabet, Google’s parent company, at a total price of $4.3 billion
+[p6] ... are talking about Rachel’s ex, who tried to burn their home down, and that the word “she” comes up in that conversation, but I scrubbed through the episodes again to find it, and even Googled it, but couldn’t come upon the scene, or any mention of it, again
+[p7] And it seems everyone's got an opinion on running workplace meetings more efficiently: Jeff Bezos' believes in writing detailed memos, Jack Dorsey prefers reading Google Docs together and Elon Musk encourages employees to only hold urgent meetings, not regular ones
+[p8] (computers cyberattack sands casino) Since the start of the current conflict, cybersecurity companies such as Google and Proofpoint have mostly observed Iranian groups conducting espionage operations
+</item>
+
+=== OUTPUT ===
+Output format: return exactly one JSON object and nothing else (no prose, no code fence). The object has one key, "features", whose value is a list; each element is an object with four keys: "feature" (the property, a short phrase in the style of the examples), "type" (one of: encyclopaedic, function, smell, sound, tactile, taste, taxonomic, visual-colour, visual-form_and_surface, visual-motion, associated_entity), "evidence" (the passage ids, such as "p1", that support the property; an empty list when none does) and "general" (true when no passage supports the property, else false). The JSON schema it must validate against:
+{"properties": {"features": {"items": {"properties": {"evidence": {"items": {"type": "string"}, "type": "array"}, "feature": {"type": "string"}, "general": {"type": "boolean"}, "type": {"enum": ["encyclopaedic", "function", "smell", "sound", "tactile", "taste", "taxonomic", "visual-colour", "visual-form_and_surface", "visual-motion", "associated_entity"], "type": "string"}}, "required": ["feature", "type", "evidence", "general"], "type": "object"}, "type": "array"}}, "required": ["features"], "type": "object"}
