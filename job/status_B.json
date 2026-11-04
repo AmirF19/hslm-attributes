@@ -11,30 +11,6 @@
    "invalid": {},
    "items": 1181,
    "missing": [
-    "pop-ago",
-    "pop-agree",
-    "pop-agreement",
-    "pop-ahead",
-    "pop-airport",
-    "pop-al",
-    "pop-alaska",
-    "pop-alex",
-    "pop-alive",
-    "pop-allegation",
-    "pop-allege",
-    "pop-ally",
-    "pop-almost",
-    "pop-alone",
-    "pop-amazing",
-    "pop-ambassador",
-    "pop-amendment",
-    "pop-america",
-    "pop-americans",
-    "pop-analysis",
-    "pop-angry",
-    "pop-animal",
-    "pop-anthony",
-    "pop-anthropic",
     "pop-anti",
     "pop-anymore",
     "pop-anyway",
@@ -971,23 +947,18 @@
     "pop-young",
     "pop-youtube"
    ],
-   "valid": 222
+   "valid": 246
   },
   "C": {
    "invalid": {},
    "items": 1181,
-   "missing": [
-    "pop-x",
-    "pop-york",
-    "pop-young",
-    "pop-youtube"
-   ],
-   "valid": 1177
+   "missing": [],
+   "valid": 1181
   }
  },
  "totals": {
   "invalid": 0,
-  "missing": 963,
-  "valid": 2580
+  "missing": 935,
+  "valid": 2608
  }
 }
